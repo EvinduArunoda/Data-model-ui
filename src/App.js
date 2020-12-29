@@ -1,25 +1,45 @@
 import logo from './logo.svg';
 import './App.css';
+import {withRouter} from "react-router-dom";
+import {compose} from "redux";
+import {firestoreConnect, withFirebase} from "react-redux-firebase";
+import {connect} from 'react-redux';
+import MenuBar from "./Components/MenuBar";
+import React from "react";
+import LoginPage from './Containers/LoginPage/index';
+import HomePage from './Containers/HomePage/index';
+import LoadingIndicator from "./Components/LoadinfIndicator";
+import {Route, Switch} from "react-router";
 
-function App() {
+function App(props) {
+    if (!props.auth || props.loading) {
+        return <LoadingIndicator/>
+    }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <>
+        <MenuBar />
+          {!props.auth.uid ? (
+              <Switch>
+                  <Route path="/" component={LoginPage}/>
+              </Switch>
+          ) : (
+              <Switch>
+                  <Route exact path="/" component={HomePage}/>
+              </Switch>
+          )}
+      </>
   );
 }
+const mapStateToProps = ({firestore,firebase}) => {
+  return {
+    users: firestore.ordered['Users'],
+    auth: firebase.auth
+  }
+};
 
-export default App;
+const mapDispatchToProps = {};
+
+export default withRouter(compose(firestoreConnect(() => [
+  { collection: 'Users' },
+]),connect(mapStateToProps, mapDispatchToProps))(withFirebase(App)));
