@@ -36,9 +36,6 @@ function LoginForm() {
   const handleChangePassword = event => {
     setPassword(event.target.value);
   };
-  const handleSubmit = () => {
-    // dispatch(loginUser(email, password))
-  }
   return (
       <Paper className={classes.root}>
         {/*<form onSubmit={console.log('submit')}>*/}

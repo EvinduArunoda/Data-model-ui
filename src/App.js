@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import {withRouter} from "react-router-dom";
 import {compose} from "redux";
