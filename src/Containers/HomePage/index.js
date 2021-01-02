@@ -7,6 +7,11 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
+import {withRouter} from "react-router-dom";
+import {compose} from "redux";
+import {firestoreConnect, withFirebase} from "react-redux-firebase";
+import {connect} from "react-redux";
+import LoadingIndicator from "../../Components/LoadinfIndicator";
 
 const useStyles = makeStyles({
     root: {
@@ -33,9 +38,22 @@ const useStyles = makeStyles({
 });
 
 
-function HomePage() {
+function HomePage(props) {
     const classes = useStyles();
+    if (!props.Datasets) {
+        return <LoadingIndicator/>
+    }
+    const dataset = (props.Datasets[0]);
 
+    function intersperse(arr, sep) {
+        if (arr.length === 0) {
+            return [];
+        }
+
+        return arr.slice(1).reduce(function(xs, x, i) {
+            return xs.concat([sep, x]);
+        }, [arr[0]]);
+    }
     return (
         <Container maxWidth="md">
             <h2
@@ -51,8 +69,8 @@ function HomePage() {
         <Card className={classes.root}>
             <CardContent>
                    <div>
-                       <a href='https://www.researchgate.net/profile/Douglas_Gross/publication/270438309/figure/fig2/AS:642161976553472@1530114754734/Dataset-Visualization-aleft-top-after-SMOTE-bright-top-after-Tomek-Link-cleaning.png' target="_blank">
-                       <img src='https://www.researchgate.net/profile/Douglas_Gross/publication/270438309/figure/fig2/AS:642161976553472@1530114754734/Dataset-Visualization-aleft-top-after-SMOTE-bright-top-after-Tomek-Link-cleaning.png' style={{ marginTop: 20 }} />
+                       <a href={dataset.visualizer_url} target="_blank">
+                       <img src={dataset.visualizer_url} style={{ marginTop: 20 }} />
                        </a>
                    </div>
             </CardContent>
@@ -75,31 +93,31 @@ function HomePage() {
                                     <TableCell component="th" scope="row">
                                         Dataset :
                                     </TableCell>
-                                    <TableCell align="left">UNSWNBIS</TableCell>
+                                    <TableCell align="left">{dataset.name}</TableCell>
                                 </TableRow>
                                 <TableRow >
                                     <TableCell component="th" scope="row">
                                         Traffic Type :
                                     </TableCell>
-                                    <TableCell align="left">Synthetic</TableCell>
+                                    <TableCell align="left">{dataset.traffic_type}</TableCell>
                                 </TableRow>
                                 <TableRow >
                                     <TableCell component="th" scope="row">
                                         Attack Type :
                                     </TableCell>
-                                    <TableCell align="left">Worms, Shellcode, Reconnaissance, Generic, Backdoor, DoS, Exploits, Fuzzers</TableCell>
+                                    <TableCell align="left">{intersperse(dataset.attack_type,', ')}</TableCell>
                                 </TableRow>
                                 <TableRow >
                                     <TableCell component="th" scope="row">
                                         Total number of features :
                                     </TableCell>
-                                    <TableCell align="left">49</TableCell>
+                                    <TableCell align="left">{dataset.no_of_features}</TableCell>
                                 </TableRow>
                                 <TableRow >
                                     <TableCell component="th" scope="row">
-                                        Data points
+                                        Data points :
                                     </TableCell>
-                                    <TableCell align="left">2 million</TableCell>
+                                    <TableCell align="left">{dataset.data_points}</TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>
@@ -109,5 +127,14 @@ function HomePage() {
 
 );
 }
+const mapStateToProps = ({firestore}) => {
+    return {
+        Datasets: firestore.ordered['Datasets']
+    }
+};
 
-export default HomePage;
+const mapDispatchToProps = {};
+
+export default withRouter(compose(firestoreConnect(() => [
+    { collection: 'Datasets' },
+]),connect(mapStateToProps, mapDispatchToProps))(withFirebase(HomePage)));

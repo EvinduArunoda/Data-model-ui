@@ -7,11 +7,12 @@ import MenuBar from "./Components/MenuBar";
 import React from "react";
 import LoginPage from './Containers/LoginPage/index';
 import HomePage from './Containers/HomePage/index';
+import DashboardPage from './Containers/DashboardPage/index';
 import LoadingIndicator from "./Components/LoadinfIndicator";
 import {Route, Switch} from "react-router";
 
 function App(props) {
-    if (!props.auth || props.loading) {
+    if (!props.auth.isLoaded || props.loading) {
         return <LoadingIndicator/>
     }
 
@@ -24,16 +25,18 @@ function App(props) {
               </Switch>
           ) : (
               <Switch>
-                  <Route exact path="/" component={HomePage}/>
+                  <Route exact path="/" component={DashboardPage}/>
+                  <Route exact path="/homepage" component={HomePage}/>
               </Switch>
           )}
       </>
   );
 }
-const mapStateToProps = ({firestore,firebase}) => {
+const mapStateToProps = ({firestore,firebase,loginReducer}) => {
   return {
     users: firestore.ordered['Users'],
-    auth: firebase.auth
+    auth: firebase.auth,
+    loading: loginReducer.loading
   }
 };
 
