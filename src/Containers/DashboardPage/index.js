@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -15,6 +15,10 @@ import {compose} from "redux";
 import {firestoreConnect, withFirebase} from "react-redux-firebase";
 import {connect} from "react-redux";
 import LoadingIndicator from "../../Components/LoadinfIndicator";
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
 
 const useStyles = makeStyles({
     root: {
@@ -38,6 +42,10 @@ const useStyles = makeStyles({
     table: {
         minWidth: 400,
     },
+    formControl: {
+        margin: 1,
+        minWidth: 120,
+    },
 });
 
 function DashboardPage(props) {
@@ -46,6 +54,11 @@ function DashboardPage(props) {
         return <LoadingIndicator/>
     }
     const dataset = (props.Datasets[0]);
+    // const inputLabel = React.useRef(null);
+    // const [labelWidth, setLabelWidth] = React.useState(0);
+    // React.useEffect(() => {
+    //     setLabelWidth(inputLabel.current.offsetWidth);
+    // }, []);
     function intersperse(arr, sep) {
         if (arr.length === 0) {
             return [];
@@ -55,6 +68,7 @@ function DashboardPage(props) {
             return xs.concat([sep, x]);
         }, [arr[0]]);
     }
+
     return(
         <Container maxWidth="md">
             <h2
@@ -64,6 +78,7 @@ function DashboardPage(props) {
                     alignItems: 'center',
                     padding: 20,
                 }}
+                onClick={() => window.location.href = '/homepage'}
             >
                 {dataset.name}
             </h2>
@@ -85,7 +100,24 @@ function DashboardPage(props) {
                                 <TableCell component="th" scope="row">
                                     Dataset :
                                 </TableCell>
-                                <TableCell align="left" onClick={() => window.location.href = '/homepage'}> {dataset.name} </TableCell>
+                                {/*<TableCell align="left" onClick={() => window.location.href = '/homepage'}> {dataset.name} </TableCell>*/}
+                                <TableCell align="left" >
+                                    <FormControl variant="outlined" className={classes.formControl}>
+                                    {/*<InputLabel  id="demo-simple-select-outlined-label">*/}
+                                    {/*    Dataset*/}
+                                    {/*</InputLabel>*/}
+                                    <Select
+                                        labelId="demo-simple-select-outlined-label"
+                                        id="demo-simple-select-outlined"
+                                        value={dataset.name}
+                                        onChange={() => console.log('here')}
+                                        // labelWidth={labelWidth}
+                                        style={{ borderRadius: 8 + 'px' }}
+                                    >
+                                        <MenuItem value={dataset.name}>{dataset.name}</MenuItem>
+                                    </Select>
+                                </FormControl>
+                                </TableCell>
                             </TableRow>
                             <TableRow >
                                 <TableCell component="th" scope="row">
