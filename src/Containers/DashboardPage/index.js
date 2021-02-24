@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles, withStyles} from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Container from '@material-ui/core/Container';
@@ -9,18 +9,16 @@ import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import TableHead from '@material-ui/core/TableHead';
 import Bars from 'react-bars';
-import {history} from "../../store";
-import {withRouter} from "react-router-dom";
 import {compose} from "redux";
 import {firestoreConnect, withFirebase} from "react-redux-firebase";
 import {connect} from "react-redux";
 import LoadingIndicator from "../../Components/LoadinfIndicator";
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
+import Dialog from '@material-ui/core/Dialog';
 
-const useStyles = makeStyles({
+const styles = theme => ({
     root: {
         minWidth: 275,
         marginBottom: 20
@@ -48,17 +46,26 @@ const useStyles = makeStyles({
     },
 });
 
-function DashboardPage(props) {
-    const classes = useStyles();
-    if (!props.Datasets) {
+function DashboardPage({classes, Datasets}) {
+    const [dataSet, setDataSet] = React.useState('UNSW-NB15');
+    const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+    if (!Datasets) {
         return <LoadingIndicator/>
     }
-    const dataset = (props.Datasets[0]);
-    // const inputLabel = React.useRef(null);
-    // const [labelWidth, setLabelWidth] = React.useState(0);
-    // React.useEffect(() => {
-    //     setLabelWidth(inputLabel.current.offsetWidth);
-    // }, []);
+    const handleChange = event => {
+        setDataSet(event.target.value);
+    };
+
+    const dataset = (Datasets.filter(el => el.name === dataSet)[0]);
+
     function intersperse(arr, sep) {
         if (arr.length === 0) {
             return [];
@@ -70,28 +77,39 @@ function DashboardPage(props) {
     }
 
     return(
-        <Container maxWidth="md">
-            <h2
+
+    <Container >
+        <SimpleDialog open={open} dataSet={dataset} onClose={handleClose} />
+
+            <h1
                 style={{
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    padding: 20,
                 }}
-                onClick={() => window.location.href = '/homepage'}
             >
                 {dataset.name}
-            </h2>
-            <h4
+            </h1>
+        <h5
+            style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                color: 'blue'
+            }}
+            onClick={() => handleClickOpen()}
+        >
+            Click Here
+        </h5>
+            <h3
                 style={{
-                    display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
                     padding: 20,
                 }}
             >
                 Model Information
-            </h4>
+            </h3>
             <Card className={classes.root}>
                 <CardContent>
                     <Table className={classes.table} aria-label="simple table">
@@ -100,21 +118,17 @@ function DashboardPage(props) {
                                 <TableCell component="th" scope="row">
                                     Dataset :
                                 </TableCell>
-                                {/*<TableCell align="left" onClick={() => window.location.href = '/homepage'}> {dataset.name} </TableCell>*/}
+
                                 <TableCell align="left" >
                                     <FormControl variant="outlined" className={classes.formControl}>
-                                    {/*<InputLabel  id="demo-simple-select-outlined-label">*/}
-                                    {/*    Dataset*/}
-                                    {/*</InputLabel>*/}
                                     <Select
                                         labelId="demo-simple-select-outlined-label"
                                         id="demo-simple-select-outlined"
                                         value={dataset.name}
-                                        onChange={() => console.log('here')}
-                                        // labelWidth={labelWidth}
+                                        onChange={handleChange}
                                         style={{ borderRadius: 8 + 'px' }}
                                     >
-                                        <MenuItem value={dataset.name}>{dataset.name}</MenuItem>
+                                        {Datasets.map(el => <MenuItem key={el.name} value={el.name}>{el.name}</MenuItem> )}
                                     </Select>
                                 </FormControl>
                                 </TableCell>
@@ -136,7 +150,6 @@ function DashboardPage(props) {
                             display: 'flex',
                             justifyContent: 'left',
                             alignItems: 'left',
-                            // padding: 5,
                         }}
                     >
                         Attack Detection :
@@ -192,7 +205,6 @@ function DashboardPage(props) {
             </Card>
             <h4
                 style={{
-                    display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
                     padding: 20,
@@ -208,7 +220,6 @@ function DashboardPage(props) {
             </Card>
             <h4
                 style={{
-                    display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
                     padding: 20,
@@ -257,6 +268,129 @@ function DashboardPage(props) {
         </Container>
     )
 }
+const useStyles = makeStyles({
+    root: {
+        minWidth: 275,
+        marginBottom: 20
+    },
+    title: {
+        fontSize: 14,
+    },
+    pos: {
+        marginBottom: 0,
+    },
+    menuButton: {
+        marginTop: 20,
+    },
+    field: {
+        width: '100%',
+        marginBottom: 20,
+        backgroundColor: 'white'
+    },
+    table: {
+        minWidth: 400,
+    },
+});
+function SimpleDialog(props) {
+    const classes = useStyles();
+
+    const {
+        dataSet, onClose, open
+    } = props;
+    if (!dataSet ) {
+        return (<LoadingIndicator />);
+    }
+    const handleClose = () => {
+        onClose();
+    };
+
+    function intersperse(arr, sep) {
+        if (arr.length === 0) {
+            return [];
+        }
+
+        return arr.slice(1).reduce(function(xs, x, i) {
+            return xs.concat([sep, x]);
+        }, [arr[0]]);
+    }
+
+
+    return (
+        <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
+        <Container >
+            {/*<DialogTitle id="simple-dialog-title">Add New Waste Type</DialogTitle>*/}
+            <h2
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: 20,
+                }}
+            >
+                Dataset Visualizer
+            </h2>
+            <Card className={classes.root}>
+                <CardContent>
+                    <div>
+                        <a href={dataSet.visualizer_url} target="_blank">
+                            <img src={dataSet.visualizer_url} style={{ marginTop: 20, height: 400, width: 400 }} />
+                        </a>
+                    </div>
+                </CardContent>
+            </Card>
+            <h2
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: 20,
+                }}
+            >
+                Dataset Details
+            </h2>
+            <Card className={classes.root}>
+                <CardContent>
+                    <Table className={classes.table} aria-label="simple table">
+                        <TableBody>
+                            <TableRow >
+                                <TableCell component="th" scope="row">
+                                    Dataset :
+                                </TableCell>
+                                <TableCell align="left">{dataSet.name}</TableCell>
+                            </TableRow>
+                            <TableRow >
+                                <TableCell component="th" scope="row">
+                                    Traffic Type :
+                                </TableCell>
+                                <TableCell align="left">{dataSet.traffic_type}</TableCell>
+                            </TableRow>
+                            <TableRow >
+                                <TableCell component="th" scope="row">
+                                    Attack Type(s) :
+                                </TableCell>
+                                <TableCell align="left">{intersperse(dataSet.attack_type,', ')}</TableCell>
+                            </TableRow>
+                            <TableRow >
+                                <TableCell component="th" scope="row">
+                                    Total number of features :
+                                </TableCell>
+                                <TableCell align="left">{dataSet.no_of_features}</TableCell>
+                            </TableRow>
+                            <TableRow >
+                                <TableCell component="th" scope="row">
+                                    Data points :
+                                </TableCell>
+                                <TableCell align="left">{dataSet.data_points}</TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+        </Container>
+
+        </Dialog>
+    );
+}
 
 const mapStateToProps = ({firestore}) => {
     return {
@@ -266,6 +400,6 @@ const mapStateToProps = ({firestore}) => {
 
 const mapDispatchToProps = {};
 
-export default withRouter(compose(firestoreConnect(() => [
+export default compose(firestoreConnect(() => [
     { collection: 'Datasets' },
-]),connect(mapStateToProps, mapDispatchToProps))(withFirebase(DashboardPage)));
+]),connect(mapStateToProps, mapDispatchToProps))(withStyles(styles)(withFirebase(DashboardPage)));

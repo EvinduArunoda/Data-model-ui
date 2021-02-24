@@ -1,5 +1,4 @@
 import './App.css';
-import {withRouter} from "react-router-dom";
 import {compose} from "redux";
 import {firestoreConnect, withFirebase} from "react-redux-firebase";
 import {connect} from 'react-redux';
@@ -32,9 +31,8 @@ function App(props) {
       </>
   );
 }
-const mapStateToProps = ({firestore,firebase,loginReducer}) => {
+const mapStateToProps = ({firebase,loginReducer}) => {
   return {
-    users: firestore.ordered['Users'],
     auth: firebase.auth,
     loading: loginReducer.loading
   }
@@ -42,6 +40,4 @@ const mapStateToProps = ({firestore,firebase,loginReducer}) => {
 
 const mapDispatchToProps = {};
 
-export default withRouter(compose(firestoreConnect(() => [
-  { collection: 'Users' },
-]),connect(mapStateToProps, mapDispatchToProps))(withFirebase(App)));
+export default compose(connect(mapStateToProps, mapDispatchToProps))(App);

@@ -103,7 +103,7 @@ function HomePage(props) {
                                 </TableRow>
                                 <TableRow >
                                     <TableCell component="th" scope="row">
-                                        Attack Type :
+                                        Attack Type(s) :
                                     </TableCell>
                                     <TableCell align="left">{intersperse(dataset.attack_type,', ')}</TableCell>
                                 </TableRow>
