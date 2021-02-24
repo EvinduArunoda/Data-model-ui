@@ -17,6 +17,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Dialog from '@material-ui/core/Dialog';
+import Grid from '@material-ui/core/Grid';
 
 const styles = theme => ({
     root: {
@@ -101,16 +102,20 @@ function DashboardPage({classes, Datasets}) {
         >
             Click Here
         </h5>
-            <h3
-                style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: 20,
-                }}
-            >
-                Model Information
-            </h3>
+        <Grid container spacing={3}>
+            <Grid item xs={6} key={'1'}>
+
+
             <Card className={classes.root}>
+                <h4
+                    style={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        paddingLeft: 20,
+                    }}
+                >
+                    Model Information
+                </h4>
                 <CardContent>
                     <Table className={classes.table} aria-label="simple table">
                         <TableBody>
@@ -143,17 +148,67 @@ function DashboardPage({classes, Datasets}) {
                     </Table>
                 </CardContent>
             </Card>
-            <Card className={classes.root}>
-                <CardContent>
-                    <h5
+                <Card className={classes.root}>
+                    <h4
                         style={{
-                            display: 'flex',
-                            justifyContent: 'left',
-                            alignItems: 'left',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            paddingLeft: 20,
                         }}
                     >
-                        Attack Detection :
-                    </h5>
+                        Performance Metrics
+                    </h4>
+                    <CardContent>
+                        <Table className={classes.table} aria-label="simple table">
+                            <TableBody>
+                                <TableRow >
+                                    <TableCell component="th" scope="row">
+                                        Accuracy :
+                                    </TableCell>
+                                    <TableCell align="left">{dataset.accuracy}</TableCell>
+                                </TableRow>
+                                <TableRow >
+                                    <TableCell component="th" scope="row">
+                                        FAR :
+                                    </TableCell>
+                                    <TableCell align="left">{dataset.far}</TableCell>
+                                </TableRow>
+                                <TableRow >
+                                    <TableCell component="th" scope="row">
+                                        Recall :
+                                    </TableCell>
+                                    <TableCell align="left">{dataset.recall}</TableCell>
+                                </TableRow>
+                                <TableRow >
+                                    <TableCell component="th" scope="row">
+                                        Precision :
+                                    </TableCell>
+                                    <TableCell align="left">{dataset.precision}</TableCell>
+                                </TableRow>
+                                <TableRow >
+                                    <TableCell component="th" scope="row">
+                                        f1score :
+                                    </TableCell>
+                                    <TableCell align="left">{dataset.f1_score}</TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item xs={6} key={'2'}>
+            <Card className={classes.root}>
+                <h4
+                    style={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        paddingLeft: 20,
+                    }}
+                >
+                    Attack Detection
+                </h4>
+                <CardContent>
+
                     <Table className={classes.table} aria-label="simple table">
                             <TableHead>
                                 <TableRow>
@@ -166,7 +221,7 @@ function DashboardPage({classes, Datasets}) {
 
                         <TableRow >
                                 <TableCell component="th" scope="row">
-                                    NOR :
+                                    Normal :
                                 </TableCell>
                                 <TableCell align="center">{dataset.nor.predict ? 'Yes' : 'No'}</TableCell>
                                 <TableCell align="center">{dataset.nor.actual !== undefined ? dataset.nor.actual : '-'}</TableCell>
@@ -180,14 +235,14 @@ function DashboardPage({classes, Datasets}) {
                             </TableRow>
                             <TableRow >
                                 <TableCell component="th" scope="row">
-                                    SQL :
+                                    SQL injection :
                                 </TableCell>
                                 <TableCell align="center">{dataset.sql.predict ? 'Yes' : 'No'}</TableCell>
                                 <TableCell align="center">{dataset.sql.actual !== undefined ? dataset.sql.actual : '-'}</TableCell>
                             </TableRow>
                             <TableRow >
                                 <TableCell component="th" scope="row">
-                                   DDos :
+                                   Generic :
                                 </TableCell>
                                 <TableCell align="center">{dataset.DDos.predict ? 'Yes' : 'No'}</TableCell>
                                 <TableCell align="center">{dataset.DDos.actual !== undefined ? dataset.DDos.actual : '-'}</TableCell>
@@ -203,68 +258,8 @@ function DashboardPage({classes, Datasets}) {
                     </Table>
                 </CardContent>
             </Card>
-            <h4
-                style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: 20,
-                }}
-            >
-                Intrusion Detection Workflow
-            </h4>
-            <Card className={classes.root}>
-                <CardContent>
-                    <Bars data={[{label:'Packet Capture :', value:dataset.pkt_capture, barColor: '#03e3fc'},
-                    {label:'Feature Extraction :', value:dataset.feature_extraction, barColor:'red'}]} makeUppercase={false}/>
-                </CardContent>
-            </Card>
-            <h4
-                style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: 20,
-                }}
-            >
-                Performance Metrics
-            </h4>
-            <Card className={classes.root}>
-                <CardContent>
-                    <Table className={classes.table} aria-label="simple table">
-                        <TableBody>
-                            <TableRow >
-                                <TableCell component="th" scope="row">
-                                    Precision :
-                                </TableCell>
-                                <TableCell align="left">{dataset.precision}</TableCell>
-                            </TableRow>
-                            <TableRow >
-                                <TableCell component="th" scope="row">
-                                    Recall :
-                                </TableCell>
-                                <TableCell align="left">{dataset.recall}</TableCell>
-                            </TableRow>
-                            <TableRow >
-                                <TableCell component="th" scope="row">
-                                    FAR :
-                                </TableCell>
-                                <TableCell align="left">{dataset.far}</TableCell>
-                            </TableRow>
-                            <TableRow >
-                                <TableCell component="th" scope="row">
-                                    TNR :
-                                </TableCell>
-                                <TableCell align="left">{dataset.tnr}</TableCell>
-                            </TableRow>
-                            <TableRow >
-                                <TableCell component="th" scope="row">
-                                    Accuracy :
-                                </TableCell>
-                                <TableCell align="left">{dataset.accuracy}</TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
+            </Grid>
+        </Grid>
         </Container>
     )
 }
