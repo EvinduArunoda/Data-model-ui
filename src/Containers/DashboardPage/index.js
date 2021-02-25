@@ -18,7 +18,7 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Dialog from '@material-ui/core/Dialog';
 import Grid from '@material-ui/core/Grid';
-
+import {NotificationManager} from '../../Components/react-notifications';
 const styles = theme => ({
     root: {
         minWidth: 275,
@@ -48,6 +48,17 @@ const styles = theme => ({
 });
 
 function DashboardPage({classes, Datasets}) {
+    React.useEffect(() => {
+        console.log('here')
+        NotificationManager.warning(
+            'this.props.error',
+            "Login Error",
+            3000,
+            null,
+            null,
+            ''
+        )
+    }, [Datasets]);
     const [dataSet, setDataSet] = React.useState('UNSW-NB15');
     const [open, setOpen] = React.useState(false);
 
