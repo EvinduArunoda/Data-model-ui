@@ -19,6 +19,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Dialog from '@material-ui/core/Dialog';
 import Grid from '@material-ui/core/Grid';
 import {NotificationManager} from '../../Components/react-notifications';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+
 const styles = theme => ({
     root: {
         minWidth: 275,
@@ -46,21 +49,25 @@ const styles = theme => ({
         minWidth: 120,
     },
 });
+function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
 
-function DashboardPage({classes, Datasets}) {
-    React.useEffect(() => {
-        console.log('here')
-        NotificationManager.warning(
-            'this.props.error',
-            "Login Error",
-            3000,
-            null,
-            null,
-            ''
-        )
-    }, [Datasets]);
+}
+
+
+function DashboardPage({classes, Datasets, Notifications}) {
+
     const [dataSet, setDataSet] = React.useState('UNSW-NB15');
     const [open, setOpen] = React.useState(false);
+    const [_open, _setOpen] = React.useState(false);
+
+    const handleClick = () => {
+        _setOpen(true);
+    };
+
+    React.useEffect(() => {
+        handleClick()
+    }, [Notifications]);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -69,6 +76,15 @@ function DashboardPage({classes, Datasets}) {
     const handleClose = () => {
         setOpen(false);
     };
+
+    const _handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        _setOpen(false);
+    };
+
     if (!Datasets) {
         return <LoadingIndicator/>
     }
@@ -91,6 +107,12 @@ function DashboardPage({classes, Datasets}) {
     return(
 
     <Container >
+        <Snackbar open={_open} autoHideDuration={6000} onClose={_handleClose}>
+            <Alert onClose={_handleClose} severity="error">
+                An intrusion detected !
+            </Alert>
+        </Snackbar>
+        {/*<Alert severity="error">This is an error message!</Alert>*/}
         <SimpleDialog open={open} dataSet={dataset} onClose={handleClose} />
 
             <h1
@@ -206,6 +228,25 @@ function DashboardPage({classes, Datasets}) {
                         </Table>
                     </CardContent>
                 </Card>
+                {dataset.plot_features ?
+                    <Card className={classes.root}>
+                        <h3
+                            style={{
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                paddingLeft: 20,
+                            }}
+                        >
+                            Plot of Features
+                        </h3>
+                        <CardContent>
+                            <div>
+                                <a href={dataset.plot_features} target="_blank">
+                                    <img src={dataset.plot_features} style={{ marginLeft: 60, height: 190, width: 400, display: 'flex' }} />
+                                </a>
+                            </div>
+                        </CardContent>
+                    </Card> : <div/> }
             </Grid>
             <Grid item xs={6} key={'2'}>
             <Card className={classes.root}>
@@ -269,6 +310,25 @@ function DashboardPage({classes, Datasets}) {
                     </Table>
                 </CardContent>
             </Card>
+                {dataset.opt_corelation ?
+                <Card className={classes.root}>
+                    <h3
+                        style={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            paddingLeft: 20,
+                        }}
+                    >
+                       Output Corelation
+                    </h3>
+                        <CardContent>
+                            <div>
+                                <a href={dataset.opt_corelation} target="_blank">
+                                    <img src={dataset.opt_corelation} style={{ marginLeft: 60, height: 400, width: 400, display: 'flex' }} />
+                                </a>
+                            </div>
+                        </CardContent>
+                </Card> : <div/> }
             </Grid>
         </Grid>
         </Container>
@@ -400,7 +460,8 @@ function SimpleDialog(props) {
 
 const mapStateToProps = ({firestore}) => {
     return {
-        Datasets: firestore.ordered['Datasets']
+        Datasets: firestore.ordered['Datasets'],
+        Notifications: firestore.ordered['Notifications']
     }
 };
 
@@ -408,4 +469,5 @@ const mapDispatchToProps = {};
 
 export default compose(firestoreConnect(() => [
     { collection: 'Datasets' },
+    { collection: 'Notifications' },
 ]),connect(mapStateToProps, mapDispatchToProps))(withStyles(styles)(withFirebase(DashboardPage)));
