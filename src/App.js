@@ -1,6 +1,7 @@
 import './App.css';
 import clsx from 'clsx';
 import {compose} from "redux";
+import { NavLink } from 'react-router-dom';
 import {firestoreConnect, withFirebase} from "react-redux-firebase";
 import {connect} from 'react-redux';
 import MenuBar from "./Components/MenuBar";
@@ -90,6 +91,9 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
     },
 }));
+const LinkBtn = React.forwardRef(function LinkBtn(props, ref) { // eslint-disable-line
+    return <NavLink to={props.to} {...props} innerRef={ref} />; // eslint-disable-line
+});
 function App(props) {
     const classes = useStyles();
     const theme = useTheme();
@@ -166,19 +170,10 @@ function App(props) {
                       </div>
                       <Divider />
                       <List>
-                          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                              <ListItem button key={text}>
+                          {[{name:'Dataset Visualization',to:'/'}, {name:'Detected Attacks',to:'/detected-attacks'}].map((text, index) => (
+                              <ListItem component={LinkBtn} button key={text} to={text.to}>
                                   <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                                  <ListItemText primary={text} />
-                              </ListItem>
-                          ))}
-                      </List>
-                      <Divider />
-                      <List>
-                          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                              <ListItem button key={text}>
-                                  <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                                  <ListItemText primary={text} />
+                                  <ListItemText primary={text.name} />
                               </ListItem>
                           ))}
                       </List>
@@ -190,8 +185,8 @@ function App(props) {
                   >
                       <div className={classes.drawerHeader} />
                       <Switch>
+                          <Route path="/detected-attacks" component={HomePage}/>
                           <Route exact path="/" component={DashboardPage}/>
-                          <Route exact path="/homepage" component={HomePage}/>
                       </Switch>
                   </main>
               </div>
