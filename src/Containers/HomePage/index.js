@@ -12,7 +12,10 @@ import {compose} from "redux";
 import {firestoreConnect, withFirebase} from "react-redux-firebase";
 import {connect} from "react-redux";
 import LoadingIndicator from "../../Components/LoadinfIndicator";
-
+import firebase from "firebase/app";
+import {history} from "../../store";
+import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
+import IconButton from "@material-ui/core/IconButton";
 const useStyles = makeStyles({
     root: {
         minWidth: 275,
@@ -40,10 +43,23 @@ const useStyles = makeStyles({
 
 function HomePage(props) {
     const classes = useStyles();
-    if (!props.Datasets) {
+    if (!props.Attacks) {
         return <LoadingIndicator/>
     }
-    const dataset = (props.Datasets[0]);
+    const attacks = (props.Attacks);
+
+    const checkRead = async () => {
+        const doc = firebase.firestore().collection('Configs').doc('read_check');
+        await doc.update({
+            read: true
+        })
+    }
+    const deleteAlert = async (id) => {
+        const doc = firebase.firestore().collection('Attacks').doc(id);
+        await doc.delete()
+    }
+
+    checkRead();
 
     function intersperse(arr, sep) {
         if (arr.length === 0) {
@@ -61,80 +77,71 @@ function HomePage(props) {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    padding: 20,
                 }}
             >
-                Dataset Visualizer
+                Attacks Detected
             </h2>
-        <Card className={classes.root}>
-            <CardContent>
-                   <div>
-                       <a href={dataset.visualizer_url} target="_blank">
-                       <img src={dataset.visualizer_url} style={{ marginTop: 20 }} />
-                       </a>
-                   </div>
-            </CardContent>
-        </Card>
-            <h2
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: 20,
-                }}
-            >
-                Dataset Details
-            </h2>
-            <Card className={classes.root}>
-                <CardContent>
+            {attacks.map(el => (
+                <Card className={classes.root} key={el.id}>
+                    <CardContent>
                         <Table className={classes.table} aria-label="simple table">
                             <TableBody>
                                 <TableRow >
                                     <TableCell component="th" scope="row">
-                                        Dataset :
+                                        Date :
                                     </TableCell>
-                                    <TableCell align="left">{dataset.name}</TableCell>
+                                    <TableCell align="left">{el.timestamp.toDate().toLocaleString()}</TableCell>
                                 </TableRow>
                                 <TableRow >
                                     <TableCell component="th" scope="row">
-                                        Traffic Type :
+                                        Attack Type :
                                     </TableCell>
-                                    <TableCell align="left">{dataset.traffic_type}</TableCell>
+                                    <TableCell align="left">{el.type}</TableCell>
                                 </TableRow>
                                 <TableRow >
                                     <TableCell component="th" scope="row">
-                                        Attack Type(s) :
+                                        Actions to take :
                                     </TableCell>
-                                    <TableCell align="left">{intersperse(dataset.attack_type,', ')}</TableCell>
+                                    <TableCell align="left">{intersperse(el.actionsToTake,', ')}</TableCell>
                                 </TableRow>
                                 <TableRow >
                                     <TableCell component="th" scope="row">
-                                        Total number of features :
+                                        IP address :
                                     </TableCell>
-                                    <TableCell align="left">{dataset.no_of_features}</TableCell>
-                                </TableRow>
-                                <TableRow >
-                                    <TableCell component="th" scope="row">
-                                        Data points :
-                                    </TableCell>
-                                    <TableCell align="left">{dataset.data_points}</TableCell>
+                                    <TableCell align="left">{el.ipAddress}</TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>
-                </CardContent>
-            </Card>
+                        <IconButton
+                            edge="start"
+                            style={{
+                                display: "flex",
+                                marginLeft: "auto",
+                                marginTop: 30
+                            }}
+                            color="inherit"
+                            aria-label="menu"
+                            onClick={()=>deleteAlert(el.id)}
+                        >
+                            <DeleteForeverOutlinedIcon />
+                        </IconButton>
+                    </CardContent>
+                </Card>
+                )
+            )}
 </Container>
 
 );
 }
 const mapStateToProps = ({firestore}) => {
     return {
-        Datasets: firestore.ordered['Datasets']
+        Attacks: firestore.ordered['Attacks']
     }
 };
 
 const mapDispatchToProps = {};
 
 export default withRouter(compose(firestoreConnect(() => [
-    { collection: 'Datasets' },
+    { collection: 'Attacks',
+    orderBy:["timestamp","desc"]}
 ]),connect(mapStateToProps, mapDispatchToProps))(withFirebase(HomePage)));

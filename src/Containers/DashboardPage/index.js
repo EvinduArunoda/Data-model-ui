@@ -21,6 +21,7 @@ import Grid from '@material-ui/core/Grid';
 import {NotificationManager} from '../../Components/react-notifications';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import {history} from "../../store";
 
 const styles = theme => ({
     root: {
@@ -66,7 +67,12 @@ function DashboardPage({classes, Datasets, Notifications}) {
     };
 
     React.useEffect(() => {
-        handleClick()
+        if (Notifications) {
+            const read_check = Notifications[0];
+            if (!read_check.read) {
+                handleClick()
+            }
+        }
     }, [Notifications]);
 
     const handleClickOpen = () => {
@@ -107,7 +113,7 @@ function DashboardPage({classes, Datasets, Notifications}) {
     return(
 
     <Container >
-        <Snackbar open={_open} autoHideDuration={6000} onClose={_handleClose}>
+        <Snackbar open={_open} autoHideDuration={6000} onClick={() => history.push('/detected-attacks')} onClose={_handleClose}>
             <Alert onClose={_handleClose} severity="error">
                 An intrusion detected !
             </Alert>
@@ -181,53 +187,53 @@ function DashboardPage({classes, Datasets, Notifications}) {
                     </Table>
                 </CardContent>
             </Card>
-                <Card className={classes.root}>
-                    <h4
-                        style={{
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            paddingLeft: 20,
-                        }}
-                    >
-                        Performance Metrics
-                    </h4>
-                    <CardContent>
-                        <Table className={classes.table} aria-label="simple table">
-                            <TableBody>
-                                <TableRow >
-                                    <TableCell component="th" scope="row">
-                                        Accuracy :
-                                    </TableCell>
-                                    <TableCell align="left">{dataset.accuracy}</TableCell>
-                                </TableRow>
-                                <TableRow >
-                                    <TableCell component="th" scope="row">
-                                        FAR :
-                                    </TableCell>
-                                    <TableCell align="left">{dataset.far}</TableCell>
-                                </TableRow>
-                                <TableRow >
-                                    <TableCell component="th" scope="row">
-                                        Recall :
-                                    </TableCell>
-                                    <TableCell align="left">{dataset.recall}</TableCell>
-                                </TableRow>
-                                <TableRow >
-                                    <TableCell component="th" scope="row">
-                                        Precision :
-                                    </TableCell>
-                                    <TableCell align="left">{dataset.precision}</TableCell>
-                                </TableRow>
-                                <TableRow >
-                                    <TableCell component="th" scope="row">
-                                        f1score :
-                                    </TableCell>
-                                    <TableCell align="left">{dataset.f1_score}</TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </CardContent>
-                </Card>
+                {/*<Card className={classes.root}>*/}
+                {/*    <h4*/}
+                {/*        style={{*/}
+                {/*            justifyContent: 'center',*/}
+                {/*            alignItems: 'center',*/}
+                {/*            paddingLeft: 20,*/}
+                {/*        }}*/}
+                {/*    >*/}
+                {/*        Performance Metrics*/}
+                {/*    </h4>*/}
+                {/*    <CardContent>*/}
+                {/*        <Table className={classes.table} aria-label="simple table">*/}
+                {/*            <TableBody>*/}
+                {/*                <TableRow >*/}
+                {/*                    <TableCell component="th" scope="row">*/}
+                {/*                        Accuracy :*/}
+                {/*                    </TableCell>*/}
+                {/*                    <TableCell align="left">{dataset.accuracy}</TableCell>*/}
+                {/*                </TableRow>*/}
+                {/*                <TableRow >*/}
+                {/*                    <TableCell component="th" scope="row">*/}
+                {/*                        FAR :*/}
+                {/*                    </TableCell>*/}
+                {/*                    <TableCell align="left">{dataset.far}</TableCell>*/}
+                {/*                </TableRow>*/}
+                {/*                <TableRow >*/}
+                {/*                    <TableCell component="th" scope="row">*/}
+                {/*                        Recall :*/}
+                {/*                    </TableCell>*/}
+                {/*                    <TableCell align="left">{dataset.recall}</TableCell>*/}
+                {/*                </TableRow>*/}
+                {/*                <TableRow >*/}
+                {/*                    <TableCell component="th" scope="row">*/}
+                {/*                        Precision :*/}
+                {/*                    </TableCell>*/}
+                {/*                    <TableCell align="left">{dataset.precision}</TableCell>*/}
+                {/*                </TableRow>*/}
+                {/*                <TableRow >*/}
+                {/*                    <TableCell component="th" scope="row">*/}
+                {/*                        f1score :*/}
+                {/*                    </TableCell>*/}
+                {/*                    <TableCell align="left">{dataset.f1_score}</TableCell>*/}
+                {/*                </TableRow>*/}
+                {/*            </TableBody>*/}
+                {/*        </Table>*/}
+                {/*    </CardContent>*/}
+                {/*</Card>*/}
                 {dataset.plot_features ?
                     <Card className={classes.root}>
                         <h3
@@ -249,67 +255,67 @@ function DashboardPage({classes, Datasets, Notifications}) {
                     </Card> : <div/> }
             </Grid>
             <Grid item xs={6} key={'2'}>
-            <Card className={classes.root}>
-                <h4
-                    style={{
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        paddingLeft: 20,
-                    }}
-                >
-                    Attack Detection
-                </h4>
-                <CardContent>
+            {/*<Card className={classes.root}>*/}
+            {/*    <h4*/}
+            {/*        style={{*/}
+            {/*            justifyContent: 'center',*/}
+            {/*            alignItems: 'center',*/}
+            {/*            paddingLeft: 20,*/}
+            {/*        }}*/}
+            {/*    >*/}
+            {/*        Attack Detection*/}
+            {/*    </h4>*/}
+            {/*    <CardContent>*/}
 
-                    <Table className={classes.table} aria-label="simple table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell></TableCell>
-                                    <TableCell align="center">Predicted attack detection</TableCell>
-                                    <TableCell align="center">Actual detection</TableCell>
-                                </TableRow>
-                            </TableHead>
-                        <TableBody>
+            {/*        <Table className={classes.table} aria-label="simple table">*/}
+            {/*                <TableHead>*/}
+            {/*                    <TableRow>*/}
+            {/*                        <TableCell></TableCell>*/}
+            {/*                        <TableCell align="center">Predicted attack detection</TableCell>*/}
+            {/*                        <TableCell align="center">Actual detection</TableCell>*/}
+            {/*                    </TableRow>*/}
+            {/*                </TableHead>*/}
+            {/*            <TableBody>*/}
 
-                        <TableRow >
-                                <TableCell component="th" scope="row">
-                                    Normal :
-                                </TableCell>
-                                <TableCell align="center">{dataset.nor.predict ? 'Yes' : 'No'}</TableCell>
-                                <TableCell align="center">{dataset.nor.actual !== undefined ? dataset.nor.actual : '-'}</TableCell>
-                            </TableRow>
-                            <TableRow >
-                                <TableCell component="th" scope="row">
-                                    DoS :
-                                </TableCell>
-                                <TableCell align="center">{dataset.dos.predict ? 'Yes' : 'No'}</TableCell>
-                                <TableCell align="center">{dataset.dos.actual !== undefined ? dataset.dos.actual : '-'}</TableCell>
-                            </TableRow>
-                            <TableRow >
-                                <TableCell component="th" scope="row">
-                                    SQL injection :
-                                </TableCell>
-                                <TableCell align="center">{dataset.sql.predict ? 'Yes' : 'No'}</TableCell>
-                                <TableCell align="center">{dataset.sql.actual !== undefined ? dataset.sql.actual : '-'}</TableCell>
-                            </TableRow>
-                            <TableRow >
-                                <TableCell component="th" scope="row">
-                                   Generic :
-                                </TableCell>
-                                <TableCell align="center">{dataset.DDos.predict ? 'Yes' : 'No'}</TableCell>
-                                <TableCell align="center">{dataset.DDos.actual !== undefined ? dataset.DDos.actual : '-'}</TableCell>
-                            </TableRow>
-                            <TableRow >
-                                <TableCell component="th" scope="row">
-                                    Other :
-                                </TableCell>
-                                <TableCell align="center">{dataset.other.predict ? 'Yes' : 'No'}</TableCell>
-                                <TableCell align="center">{dataset.other.actual !== undefined ? dataset.other.actual : '-'}</TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
+            {/*            <TableRow >*/}
+            {/*                    <TableCell component="th" scope="row">*/}
+            {/*                        Normal :*/}
+            {/*                    </TableCell>*/}
+            {/*                    <TableCell align="center">{dataset.nor.predict ? 'Yes' : 'No'}</TableCell>*/}
+            {/*                    <TableCell align="center">{dataset.nor.actual !== undefined ? dataset.nor.actual : '-'}</TableCell>*/}
+            {/*                </TableRow>*/}
+            {/*                <TableRow >*/}
+            {/*                    <TableCell component="th" scope="row">*/}
+            {/*                        DoS :*/}
+            {/*                    </TableCell>*/}
+            {/*                    <TableCell align="center">{dataset.dos.predict ? 'Yes' : 'No'}</TableCell>*/}
+            {/*                    <TableCell align="center">{dataset.dos.actual !== undefined ? dataset.dos.actual : '-'}</TableCell>*/}
+            {/*                </TableRow>*/}
+            {/*                <TableRow >*/}
+            {/*                    <TableCell component="th" scope="row">*/}
+            {/*                        SQL injection :*/}
+            {/*                    </TableCell>*/}
+            {/*                    <TableCell align="center">{dataset.sql.predict ? 'Yes' : 'No'}</TableCell>*/}
+            {/*                    <TableCell align="center">{dataset.sql.actual !== undefined ? dataset.sql.actual : '-'}</TableCell>*/}
+            {/*                </TableRow>*/}
+            {/*                <TableRow >*/}
+            {/*                    <TableCell component="th" scope="row">*/}
+            {/*                       Generic :*/}
+            {/*                    </TableCell>*/}
+            {/*                    <TableCell align="center">{dataset.DDos.predict ? 'Yes' : 'No'}</TableCell>*/}
+            {/*                    <TableCell align="center">{dataset.DDos.actual !== undefined ? dataset.DDos.actual : '-'}</TableCell>*/}
+            {/*                </TableRow>*/}
+            {/*                <TableRow >*/}
+            {/*                    <TableCell component="th" scope="row">*/}
+            {/*                        Other :*/}
+            {/*                    </TableCell>*/}
+            {/*                    <TableCell align="center">{dataset.other.predict ? 'Yes' : 'No'}</TableCell>*/}
+            {/*                    <TableCell align="center">{dataset.other.actual !== undefined ? dataset.other.actual : '-'}</TableCell>*/}
+            {/*                </TableRow>*/}
+            {/*            </TableBody>*/}
+            {/*        </Table>*/}
+            {/*    </CardContent>*/}
+            {/*</Card>*/}
                 {dataset.opt_corelation ?
                 <Card className={classes.root}>
                     <h3
@@ -461,7 +467,7 @@ function SimpleDialog(props) {
 const mapStateToProps = ({firestore}) => {
     return {
         Datasets: firestore.ordered['Datasets'],
-        Notifications: firestore.ordered['Notifications']
+        Notifications: firestore.ordered['Configs']
     }
 };
 
@@ -469,5 +475,5 @@ const mapDispatchToProps = {};
 
 export default compose(firestoreConnect(() => [
     { collection: 'Datasets' },
-    { collection: 'Notifications' },
+    { collection: 'Configs' },
 ]),connect(mapStateToProps, mapDispatchToProps))(withStyles(styles)(withFirebase(DashboardPage)));
