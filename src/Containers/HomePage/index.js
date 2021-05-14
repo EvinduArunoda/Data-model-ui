@@ -16,6 +16,8 @@ import firebase from "firebase/app";
 import {history} from "../../store";
 import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
 import IconButton from "@material-ui/core/IconButton";
+import { CSVLink, CSVDownload} from "react-csv";
+
 const useStyles = makeStyles({
     root: {
         minWidth: 275,
@@ -70,6 +72,7 @@ function HomePage(props) {
             return xs.concat([sep, x]);
         }, [arr[0]]);
     }
+    const csvData = attacks.map(el => [el.timestamp.toDate().toLocaleString(), el.type, el.ipAddress])
     return (
         <Container maxWidth="md">
             <h2
@@ -81,6 +84,12 @@ function HomePage(props) {
             >
                 Attacks Detected
             </h2>
+            <button>
+                <CSVLink data={csvData}>Download CSV</CSVLink>
+            </button>
+            <br/>
+            <br/>
+            <br/>
             {attacks.map(el => (
                 <Card className={classes.root} key={el.id}>
                     <CardContent>
@@ -108,6 +117,7 @@ function HomePage(props) {
                                     <TableCell component="th" scope="row">
                                         IP address :
                                     </TableCell>
+                                    
                                     <TableCell align="left">{el.ipAddress}</TableCell>
                                 </TableRow>
                             </TableBody>
