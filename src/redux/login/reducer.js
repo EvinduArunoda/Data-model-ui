@@ -1,6 +1,6 @@
 import produce from "immer";
 
-import { LOGIN_USER, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, RETURN_STATE, } from "./actions";
+import { LOGIN_USER, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS } from "./actions";
 
 const INIT_STATE = {
     loggedIn: false,

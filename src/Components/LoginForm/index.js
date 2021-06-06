@@ -28,14 +28,22 @@ function LoginForm() {
   const dispatch = useDispatch();
 
   const classes = useStyles();
+
   const [email, setEmail] = React.useState('');
   const handleChangeEmail = event => {
     setEmail(event.target.value);
   };
+
+
   const [password, setPassword] = React.useState('');
   const handleChangePassword = event => {
     setPassword(event.target.value);
   };
+
+  React.useEffect(() => {
+      console.log('here');
+  },[email, password])
+
   return (
       <Paper className={classes.root}>
         {/*<form onSubmit={console.log('submit')}>*/}

@@ -7,8 +7,8 @@ import {connect} from 'react-redux';
 import MenuBar from "./Components/MenuBar";
 import React from "react";
 import LoginPage from './Containers/LoginPage/index';
-import HomePage from './Containers/HomePage/index';
-import DashboardPage from './Containers/DashboardPage/index';
+import HomePage from './Containers/AttackDetails/index';
+import DashboardPage from './Containers/DatasetVisualization/index';
 import LoadingIndicator from "./Components/LoadinfIndicator";
 import {Route, Switch} from "react-router";
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -205,3 +205,4 @@ const mapStateToProps = ({firebase,loginReducer}) => {
 const mapDispatchToProps = {};
 
 export default compose(connect(mapStateToProps, mapDispatchToProps))(App);
+
